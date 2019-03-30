@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"n_",
+				"n_sample_sizes"
+			],
+			[
+				"run",
+				"run_times"
+			],
+			[
 				"treat",
 				"treatment_range"
 			],
@@ -506,19 +514,28 @@
 			[
 				"residual",
 				"residualPlot\t{car}"
-			],
-			[
-				"dwT",
-				"durbinWatsonTest\t{car}"
-			],
-			[
-				"variable",
-				"variables_in_outcome"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "gradientDescent/01_gradientDescent_basics.R",
+			"settings":
+			{
+				"buffer_size": 2415,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "gradientDescent/02_simulate_OLS_runtimes.R",
+			"settings":
+			{
+				"buffer_size": 1013,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -892,6 +909,10 @@
 		"selected_items":
 		[
 			[
+				"synt R",
+				"Set Syntax: R"
+			],
+			[
 				"synt stat",
 				"Set Syntax: Stata"
 			],
@@ -930,10 +951,6 @@
 			[
 				"send code",
 				"SendCode: Choose Program"
-			],
-			[
-				"synt R",
-				"Set Syntax: R"
 			],
 			[
 				"synt matla",
@@ -1432,7 +1449,8 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/dag/github/blog"
+		"/Users/dag/github/blog",
+		"/Users/dag/github/blog/gradientDescent"
 	],
 	"file_history":
 	[
@@ -1598,8 +1616,70 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "gradientDescent/01_gradientDescent_basics.R",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2415,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1586,
+								1586
+							]
+						],
+						"settings":
+						{
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/R/R.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "gradientDescent/02_simulate_OLS_runtimes.R",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1013,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								249,
+								249
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/R/R.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
 			]
 		}
 	],
