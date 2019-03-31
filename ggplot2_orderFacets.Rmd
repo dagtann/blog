@@ -1,0 +1,90 @@
+---
+title: "(Re-)Ordering Facets in ggplot2"
+author: "Dag Tanneberg"
+date: "31 March 2019"
+output:
+    html_document:
+        highlight: "zenburn"
+
+---
+<link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/default.min.css">
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+<script src="http://yandex.st/highlightjs/7.3/languages/r.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+## Introduction
+
+This post will show you how to order small multiples in <span style="font-variant:small-caps;">ggplot2</span> by arbitrary criteria. It is straightforward to generate small multiples in <span style="font-variant:small-caps;">ggplot2</span>: Add either `facet_grid()` or `facet_wrap()` to your code and set its first argument to (preferably) a set of factors which defines faceting groups. The order of the resulting small multiples will follow the order of the provided factor levels. In other words, if you want to sort small multiples by arbitrary criteria, the you will have to reorder the underlying factor levels.
+
+## Motivation
+
+```{r, toydata, cache=TRUE, eval=TRUE, echo = FALSE}
+# Generate toy data with multilevel structure
+rm(list = ls())
+
+# Set population level parameters
+n_districts <- 12 # number of school districts
+n_students <- 100 # number of students per district
+rho <- .4 # mean effect of spending
+
+# Draw district level correlation r
+r <- rnorm(n_districts, psych::fisherz(rho))
+r <- psych::fisherz2r(r)
+
+# Draw district level data
+ses_data <- data.frame()
+for(i in r){
+    Sigma <- matrix(c(1, i, i, 1), 2, 2)
+    ses_data <- rbind.data.frame(ses_data, MASS::mvrnorm(n_students, c(0, 0), Sigma))
+}
+rm(i, Sigma)
+names(ses_data) <- c("ses", "success")
+ses_data[, "district_id"] <- factor(
+    rep(letters[seq(n_districts)], each = n_students)
+)
+## END
+```
+
+Assume you have data, measuring the impact of socioeconomic status on student success. Students are nested in school districts. You want to: (1) Plot the relationship for each school district; (2) Order districts by the magnitude of the correlation (such that you might hypothesize possible similiarities between districts). Here is what your [toy data](#toydata) look like:
+
+```{r, showData, echo = FALSE}
+knitr::kable(ses_data[base::sample(1:nrow(ses_data), 10), ], caption = "Random Rows from the Data")
+```
+
+## Recipe
+
+The variable <span style="font-variant:small-caps;">district_id</span> identifies each school district and, consequently, the small multiples you are after. The order of its levels should match the magnitude of the within-district correlation between variables <span style="font-variant:small-caps;">ses</span> and <span style="font-variant:small-caps;">success</span>. We need to (1) compute said correlation, (2) reorder district levels by its value, and (3) plot the data.
+
+```{r, simpleplot, cache = TRUE, eval = TRUE, fig.align = "center"}
+# Step (1): Calculate the within district correlation
+r_district <- vector("numeric", length(unique(ses_data[["district_id"]])))
+names(r_district) <-  unique(ses_data[["district_id"]])
+for(i in names(r_district)){
+    filter <- which(ses_data$district == i)
+    r_district[i] <- cor(ses_data[filter, "ses"], ses_data[filter, "success"])
+}
+
+# Step (2): Reorder the factor levels
+levels(ses_data$district_id) # before
+ses_data <- within(ses_data,
+    district_id <- factor(district_id, names(r_district)[order(r_district)])
+)
+levels(ses_data$district_id) # after
+
+# Step (3): Plot the data
+library("ggplot2")
+p <- ggplot(data = ses_data, aes(x = ses, y = success)) +
+    geom_point() + geom_smooth(method = "lm") +
+    facet_wrap(vars(district_id))
+print(p)
+```
+
+## Conclusion
+
+In this post you have seen how small multiples in <span style="font-variant:small-caps;">ggplot2</span> can be sorted by arbitrary criteria. Although the toy example is limited to the case of `facet_wrap()` and a single grouping factor, the approach generalizes. No matter what wrapping function or how many facets you define: __The order of small multiple plots follows the order of the underlying factor levels.__
+
+## Toy Data Creation {#toydata}
+```{r, showToyDataGeneration, ref.label = "toydata", eval = FALSE}
+
+
+
