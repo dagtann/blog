@@ -1,24 +1,22 @@
----
-title: "(Re-)Ordering Facets in ggplot2"
-author: "Dag Tanneberg"
-date: "31 March 2019"
-output:
-    html_document:
-        highlight: "zenburn"
-
----
 <link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/default.min.css">
 <script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
 <script src="http://yandex.st/highlightjs/7.3/languages/r.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
+```{r, options_chunk, include = FALSE}
+knitr::opts_chunk$set(
+    cache = TRUE, eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 12, 
+    fig.height = 8
+)
+set.seed(7749941)
+```
 ## Introduction
 
 This post will show you how to order small multiples in <span style="font-variant:small-caps;">ggplot2</span> by arbitrary criteria. It is straightforward to generate small multiples in <span style="font-variant:small-caps;">ggplot2</span>: Add either `facet_grid()` or `facet_wrap()` to your code and set its first argument to (preferably) a set of factors which defines faceting groups. The order of the resulting small multiples will follow the order of the provided factor levels. In other words, if you want to sort small multiples by arbitrary criteria, the you will have to reorder the underlying factor levels.
 
 ## Motivation
 
-```{r, toydata, cache=TRUE, eval=TRUE, echo = FALSE}
+```{r, toydata}
 # Generate toy data with multilevel structure
 rm(list = ls())
 
@@ -28,7 +26,7 @@ n_students <- 100 # number of students per district
 rho <- .4 # mean effect of spending
 
 # Draw district level correlation r
-r <- rnorm(n_districts, psych::fisherz(rho))
+r <- rnorm(n_districts, psych::fisherz(rho), sd = 1.5)
 r <- psych::fisherz2r(r)
 
 # Draw district level data
@@ -47,7 +45,7 @@ ses_data[, "district_id"] <- factor(
 
 Assume you have data, measuring the impact of socioeconomic status on student success. Students are nested in school districts. You want to: (1) Plot the relationship for each school district; (2) Order districts by the magnitude of the correlation (such that you might hypothesize possible similiarities between districts). Here is what your [toy data](#toydata) look like:
 
-```{r, showData, echo = FALSE}
+```{r, showData}
 knitr::kable(ses_data[base::sample(1:nrow(ses_data), 10), ], caption = "Random Rows from the Data")
 ```
 
@@ -55,7 +53,7 @@ knitr::kable(ses_data[base::sample(1:nrow(ses_data), 10), ], caption = "Random R
 
 The variable <span style="font-variant:small-caps;">district_id</span> identifies each school district and, consequently, the small multiples you are after. The order of its levels should match the magnitude of the within-district correlation between variables <span style="font-variant:small-caps;">ses</span> and <span style="font-variant:small-caps;">success</span>. We need to (1) compute said correlation, (2) reorder district levels by its value, and (3) plot the data.
 
-```{r, simpleplot, cache = TRUE, eval = TRUE, fig.align = "center"}
+```{r, simpleplot, echo = TRUE}
 # Step (1): Calculate the within district correlation
 r_district <- vector("numeric", length(unique(ses_data[["district_id"]])))
 names(r_district) <-  unique(ses_data[["district_id"]])
@@ -73,18 +71,17 @@ levels(ses_data$district_id) # after
 
 # Step (3): Plot the data
 library("ggplot2")
-p <- ggplot(data = ses_data, aes(x = ses, y = success)) +
+ggplot(data = ses_data, aes(x = ses, y = success)) +
     geom_point() + geom_smooth(method = "lm") +
     facet_wrap(vars(district_id))
-print(p)
 ```
 
 ## Conclusion
 
 In this post you have seen how small multiples in <span style="font-variant:small-caps;">ggplot2</span> can be sorted by arbitrary criteria. Although the toy example is limited to the case of `facet_wrap()` and a single grouping factor, the approach generalizes. No matter what wrapping function or how many facets you define: __The order of small multiple plots follows the order of the underlying factor levels.__
 
-## Toy Data Creation {#toydata}
-```{r, showToyDataGeneration, ref.label = "toydata", eval = FALSE}
+## Toy Data Creation<a name="toydata"></a>
+```{r, showToyDataGeneration, ref.label = "toydata", eval = FALSE, echo = TRUE}
 
 
 

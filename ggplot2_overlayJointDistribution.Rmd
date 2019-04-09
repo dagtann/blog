@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/default.min.css">
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+<script src="http://yandex.st/highlightjs/7.3/languages/r.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+```{r, options_chunk, include = FALSE}
+knitr::opts_chunk$set(
+    cache = TRUE, eval = TRUE, echo = FALSE, fig.align = "center", fig.width = 12, 
+    fig.height = 8, warning = FALSE
+)
+```
+
+## Introduction
+
+This post demonstrates how small multiples can be used to highlight different parts of a distribution. In principle, <span style="font-variant:small-caps;">ggplot2</span> offers many, easy to use options that partial out different groups in your data. The aesthetics color, size, and shape come to mind. Moreover, the purpose of small multiples is to show the same (bivariate) association across different groups in your data. Notwithstanding, either approach has drawbacks. When mapping categories to an aesthetic like color, all groups remain on the same canvas. The result may be wanting, especially when you work with big datasets. Small multiples, in contrast, draw out each group but deemphasize the grand picture. Wouldn't it be nice to find some middle ground?
+
+## Motivation 
+
+We are going to work with the diamonds data which is available from the <span style="font-variant:small-caps;">ggplot2</span> package. The goal is to highlight each cut in a scatter plot of price against carat without falling into either of the extremes mentioned above. Here is what the data look like:
+
+```{r, showData, echo = TRUE, messages = FALSE}
+rm(list = ls())
+library("tidyverse")
+data(diamonds)
+select(diamonds, price, carat, cut)
+```
+
+## Recipe
+
+As always, smart layering is the answer. We are going to plot the diamonds data twice using different colors: Once for all diamonds in the data, and once for each cut. The code also includes minor finishing touches (opacity and color).
+
+```{r, recipe, echo = TRUE, messages = FALSE}
+alpha_lvl <- .4
+ggplot(data = diamonds, aes(x = carat, y = price)) +
+    geom_point(
+        data = select(diamonds, -cut),
+        # Dropping <cut> plots all our data. 
+        colour = "#3288bd", alpha = alpha_lvl
+    ) +
+    geom_point(colour = "#d53e4f", alpha = alpha_lvl) +
+    scale_y_log10() +
+    facet_wrap(vars(cut))
+```
+
+## Conclusion
+
+This post demonstrates how small multiples can highlight different segments within a distribution without losing sight of its overall shape. The key is smart layering. Plot the data twice: Once ignore and once highlight your facets.
+

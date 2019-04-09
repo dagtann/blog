@@ -519,23 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "gradientDescent/01_gradientDescent_basics.R",
-			"settings":
-			{
-				"buffer_size": 2415,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "gradientDescent/02_simulate_OLS_runtimes.R",
-			"settings":
-			{
-				"buffer_size": 1013,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -1449,11 +1432,14 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/dag/github/blog",
-		"/Users/dag/github/blog/gradientDescent"
+		"/Users/dag/github/blog"
 	],
 	"file_history":
 	[
+		"/Users/dag/github/blog/ggplot2_orderFacets.Rmd",
+		"/Users/dag/github/blog/upload_template.R",
+		"/Users/dag/github/blog/gradientDescent/02_simulate_OLS_runtimes.R",
+		"/Users/dag/github/blog/gradientDescent/01_gradientDescent_basics.R",
 		"/Users/dag/github/pecs/src/r/master.R",
 		"/Users/dag/github/pecs/src/r/replication/01_replicate_using_plm.R",
 		"/Users/dag/github/pecs/nbk/master_nbk.md",
@@ -1577,15 +1563,11 @@
 		"/Users/dag/github/diss/r/chapter03/04_presentation/04_04_generate_bootstrap_figures.R",
 		"/Users/dag/github/diss/r/chapter03/03_heckmanDoubleProbit.R/04_generateClusterPairsConfidenceIntervals.R",
 		"/Users/dag/github/diss/00_master.aux:0 Label `fig",
-		"/Users/dag/Dropbox/data/diss/out/chapter03/tbl/iterLrTest.txt",
-		"/Users/dag/Dropbox/data/diss/out/chapter03/tbl/tblModelFit.tex",
-		"/Users/dag/Dropbox/data/diss/out/chapter03/marEff_violence_fromSTATA.csv",
-		"/Users/dag/Dropbox/data/diss/out/chapter03/fig/line_marEff_restrictionsXviolence_manual.pdf",
-		"/Users/dag/Dropbox/data/diss/out/chapter03/margEff_violenceXrestrictions_fromSTATA.csv"
+		"/Users/dag/Dropbox/data/diss/out/chapter03/tbl/iterLrTest.txt"
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
@@ -1599,6 +1581,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"toy data",
+			"toydata"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1616,76 +1600,14 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "gradientDescent/01_gradientDescent_basics.R",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2415,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1586,
-								1586
-							]
-						],
-						"settings":
-						{
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/R/R.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "gradientDescent/02_simulate_OLS_runtimes.R",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1013,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								249,
-								249
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/R/R.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 30.0
+		"height": 24.0
 	},
 	"input":
 	{
@@ -1750,7 +1672,7 @@
 	"project": "blog.sublime-project",
 	"replace":
 	{
-		"height": 56.0
+		"height": 44.0
 	},
 	"save_all_on_build": true,
 	"select_file":
