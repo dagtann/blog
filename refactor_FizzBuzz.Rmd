@@ -1,0 +1,99 @@
+---
+author: Dag Tanneberg
+date: 04/25/2019
+title: Refactor a FizzBuzz Implementation
+output: html_document
+---
+
+<link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/default.min.css">
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+<script src="http://yandex.st/highlightjs/7.3/languages/r.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+## Introduction
+
+Today I read an interesting post on R-Bloggers. In the post, [Method Matters](https://methodmatters.blogspot.com/2019/04/fizzbuzz-in-r-and-python.html) outlines a solution to a typical data scientist interview problem: FizzBuzz. 
+
+    In pseudo-code or whatever language you would like: write a program that prints the numbers from 1 to 100. But for multiples of three print “Fizz” instead of the number and for the multiples of five print “Buzz”. For numbers which are multiples of both three and five print “FizzBuzz”.
+
+The problem probes your knowledge of basic programming concepts. More specifically, it asks: "Are you able to identify and deal with multiple cases?" Method Matters introduces two simple solutions in R and Python. The first solution uses a for-loop. It iterates over a set of if-else-statements. I take no issue with this approach even though more elegant implementations are possible. The second solution uses a function to do the heavy lifting, which strikes me as more interesting, more powerful, and more questionable given its implementation by Method Matters.
+
+
+## 99 problems but for() ain't one
+
+Method Matters defines a function which takes a numeric input to pass through the set of if-else-statements defined in the first solution. It exemplifies how working code can be recycled in more complex settings. Take a moment to study the original code, I'll detail my reservations below.
+
+```{r, eval = FALSE}
+# define the function
+fizz_buzz <- function(number_sequence_f){
+  if(number_sequence_f%%3 == 0 & number_sequence_f%%5 == 0) {
+    print('FizzBuzz')
+  }
+  else if(number_sequence_f%%3 == 0) {
+    print('Fizz')
+  }
+  else if (number_sequence_f%%5 == 0){
+    print('Buzz')
+  }
+  else {
+    print(number_sequence_f)
+  }
+  
+}
+
+# apply it to the numbers 1 to 100
+sapply(seq(from = 1, to = 100, by = 1), fizz_buzz)
+```
+
+So what's not to like about it? Two things bug me in particular.
+
+1. The function does not abstract from the particular instance of the problem. Note how values 3, 5, Fizz, Buzz, and FizzBuzz have been hard-coded into the function's body. Given that the function recycles a for-loop this is not surprising. However, functions (should) encapsulate algorithms which solve entire classes of problems.
+2. More importantly, the function is not vectorized. In R, control statements such as if() or while() expect logical vectors of length one. Whatever condition you pass to them must evaluate to a *single* Boolean statement.[efn_note]The argument `number_sequence_f` is thus a misnomer because the function won't work on a sequence of numbers. For sequences longer than 1, statements such as `number_sequence_f%%3 == 0` return logical vectors of the same length. In those cases, R will default to the first element of the vector which was most likely not intended by the user.[/efn_note] Since `fizz_buzz()` consists entirely of such statements, it expects you to pass each sequence element individually. The concluding call to `sapply()` does just that. I don't mean to offend, but `sapply(seq(from = 1, to = 100, by = 1), fizz_buzz)` is `for()` in disguise.
+
+
+## fizz_buzz() refactored
+
+The refactored solution shown below generalizes from FizzBuzz, and it is vectorized. The function expects two arguments: (1) a numeric vector such as an integer sequence from 1 to 100, and (2) a "dictionary" of named values to evaluate, e.g., `c("Fizz" = 3, "Buzz" = 5)`. The first argument is checked for multiples of each entry in the dictionary. Those TRUE/FALSE evaluations are saved in a logical matrix with rows equal to `length(x)` and columns equal to `length(dictionary)`. Next, each column of that matrix is used to logically index the argument `<x>` and its selected elements are replaced by the corresponding name from the dictionary. Finally, the function returns a vector of strings.
+
+```{r}
+replace_sequence_elements <- function(x, dictionary){
+    # The function searches <x> for multiples of each element
+    # in <dictionary>. Multiples are replaced by the name of
+    # the corresponding dictionary element. If some element
+    # of <x> is a multiple of all elements in dictionary,
+    # then it will be replaced by concatenated dictionary
+    # names.
+    # x ... numeric vector
+    # dictionary ... named, numeric vector
+    # The function returns a vector of type character.
+    stopifnot("names" %in% names(attributes(dictionary)))
+    
+    out <- as.character(x)
+    K <- length(dictionary)
+    tests <- matrix(
+        FALSE, nrow = length(x), ncol = length(dictionary)
+    )
+    
+    for(k in seq(K)) {  
+        tests[, k] <- x %% dictionary[k] == 0
+        out[tests[, k]] <- names(dictionary[k])
+    }
+    out[rowSums(tests) == K] <- paste(
+        names(dictionary), collapse = ""
+    )
+    
+    return(out)
+}
+```
+
+Let's see if this works:
+
+```{r}
+replace_sequence_elements(seq(15), c("Fizz" = 3, "Buzz" = 5))
+```
+
+Looks about right.
+
+## Conclusion
+
+This post responds to and refactors a publicly available solution of a common data scientist interview problem: FizzBuzz. The refactored solution generalizes from the original and can now take any number of cases to evaluate. Moreover, it is vectorized. That said, several pain points remain. For instance, a for-loop is still doing the heavy lifting. As the number of test cases increases this may cause performance issues, at least in R. Also, the refactored solution makes  specific assumptions about the structure of its arguments. There must be no missing elements, and test cases must be passed in the form of a named vector. A different approach would be needed to avoid or at least reduce the number of such implicit assumptions. Two instructive examples may be found in the comments to Method Matters' original post.
